@@ -1,0 +1,13 @@
+server:
+  port: 8091
+
+spring:
+
+  datasource:
+    url : "jdbc:firebirdsql://localhost:3050/D:/databases/IGOR.GDB"
+    username : "geza"
+    password : "password"
+
+
+
+
