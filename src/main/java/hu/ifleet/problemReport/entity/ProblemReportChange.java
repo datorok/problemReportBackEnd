@@ -1,5 +1,9 @@
-package hu.ifleet.problemReport.entities;
+package hu.ifleet.problemReport.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.sql.Timestamp;
 
 /**
@@ -7,14 +11,25 @@ import java.sql.Timestamp;
  * Date: 2019. 02. 26. 14:11
  * Desciption:
  */
+
 public class ProblemReportChange {
+
+    private int id;
 
     private int problemReportId;
     private Timestamp stateChangeTime;
-    private int stateChangeActualState;
+    private String stateChangeActualState;
     private String stateChangeMessage;
 
     public ProblemReportChange() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getProblemReportId() {
@@ -41,17 +56,17 @@ public class ProblemReportChange {
         this.stateChangeMessage = stateChangeMessage;
     }
 
-    public int getStateChangeActualState() {
+    public String getStateChangeActualState() {
         return stateChangeActualState;
     }
 
-    public void setStateChangeActualState(int stateChangeActualState) {
+    public void setStateChangeActualState(String stateChangeActualState) {
         this.stateChangeActualState = stateChangeActualState;
     }
 
     @Override
     public String toString() {
-        return "problemReportId: "+problemReportId + "; detailes: " + stateChangeTime + " " + stateChangeActualState + " " + stateChangeMessage;
+        return "problemReportId: "+problemReportId + "; státuszváltás időpontja: " + stateChangeTime + "; státuszkód: " + stateChangeActualState + "\n" + "üzenet: " + stateChangeMessage;
     }
 
     public int compare(Object obj1, Object obj2) {

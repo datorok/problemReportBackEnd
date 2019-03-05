@@ -1,5 +1,9 @@
-package hu.ifleet.problemReport.entities;
+package hu.ifleet.problemReport.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -8,11 +12,13 @@ import java.util.List;
  * Date: 2019. 02. 25. 10:50
  * Desciption:
  */
+
 public class ProblemReport {
 
     private int reportId;
     private Timestamp reportCreationTime;
     private String params;
+    private String compId;
     private String reporterName;
     private String reporterEmail;
     private String reporterPhoneNumber;
@@ -44,6 +50,14 @@ public class ProblemReport {
 
     public void setParams(String params) {
         this.params = params;
+    }
+
+    public String getCompId() {
+        return compId;
+    }
+
+    public void setCompId(String compId) {
+        this.compId = compId;
     }
 
     public String getReporterName() {
@@ -85,7 +99,8 @@ public class ProblemReport {
     public void setProblemReportChangeList(List<ProblemReportChange> problemReportChangeList) {
         this.problemReportChangeList = problemReportChangeList;
     }
-    public void addToProblemReportChangeList(ProblemReportChange prc){
+
+    public void addToProblemReportChangeList(ProblemReportChange prc) {
         problemReportChangeList.add(prc);
     }
 }
