@@ -1,10 +1,19 @@
 package hu.ifleet.problemReport.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import java.sql.Timestamp;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Author: torokdaniel
@@ -12,63 +21,40 @@ import java.sql.Timestamp;
  * Desciption:
  */
 
+@Data
+@NoArgsConstructor
+//@AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProblemReportChange {
-
     private int id;
-
     private int problemReportId;
-    private Timestamp stateChangeTime;
-    private String stateChangeActualState;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    private LocalDateTime stateChangeTime;
+    private String stateChangeActualStateString;
+    private int stateChangeActualStateInt;
     private String stateChangeMessage;
 
-    public ProblemReportChange() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
+    public ProblemReportChange(int id, int problemReportId, LocalDateTime stateChangeTime, String stateChangeActualStateString, int stateChangeActualStateInt, String stateChangeMessage) {
         this.id = id;
-    }
-
-    public int getProblemReportId() {
-        return problemReportId;
-    }
-
-    public void setProblemReportId(int problemReportId) {
         this.problemReportId = problemReportId;
-    }
-
-    public Timestamp getStateChangeTime() {
-        return stateChangeTime;
-    }
-
-    public void setStateChangeTime(Timestamp stateChangeTime) {
         this.stateChangeTime = stateChangeTime;
-    }
-
-    public String getStateChangeMessage() {
-        return stateChangeMessage;
-    }
-
-    public void setStateChangeMessage(String stateChangeMessage) {
+        this.stateChangeActualStateString = stateChangeActualStateString;
+        this.stateChangeActualStateInt = stateChangeActualStateInt;
         this.stateChangeMessage = stateChangeMessage;
     }
 
-    public String getStateChangeActualState() {
-        return stateChangeActualState;
+    public ProblemReportChange(int id, LocalDateTime stateChangeTime, int stateChangeActualStateInt) {
+        this.id = id;
+        this.stateChangeTime = stateChangeTime;
+        this.stateChangeActualStateInt = stateChangeActualStateInt;
     }
-
-    public void setStateChangeActualState(String stateChangeActualState) {
-        this.stateChangeActualState = stateChangeActualState;
-    }
-
-    @Override
-    public String toString() {
-        return "problemReportId: "+problemReportId + "; státuszváltás időpontja: " + stateChangeTime + "; státuszkód: " + stateChangeActualState + "\n" + "üzenet: " + stateChangeMessage;
-    }
-
+    //    @Override
+//    public String toString() {
+//        return "problemReportId: "+problemReportId + "; státuszváltás időpontja: " + stateChangeTime + "; státuszkód: " + stateChangeActualStateString + "\n" + "üzenet: " + stateChangeMessage;
+//    }
+//
     public int compare(Object obj1, Object obj2) {
         Integer prid1 = ((ProblemReportChange) obj1).getProblemReportId();
         Integer prid2 = ((ProblemReportChange) obj2).getProblemReportId();

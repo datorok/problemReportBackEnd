@@ -1,14 +1,19 @@
 package hu.ifleet.problemReport.service;
 
-import hu.ifleet.problemReport.entity.ProblemReport;
-import hu.ifleet.problemReport.entity.ProblemReportChange;
-import org.springframework.stereotype.Service;
-
-
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Properties;
+
+import hu.ifleet.problemReport.entity.ErrorType;
+import hu.ifleet.problemReport.entity.ProblemReport;
+import hu.ifleet.problemReport.entity.ProblemReportChange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import static hu.ifleet.problemReport.entity.ErrorType.valueOfIntErrorType;
 
 /**
  * Author: torokdaniel
@@ -18,14 +23,21 @@ import java.util.List;
 
 @Service
 public class ProblemReportServiceImpl implements ProblemReportService {
+    private Logger logger = LoggerFactory.getLogger(ProblemReportServiceImpl.class);
 
     private Connection getConnection() {
 
         Connection connection = null;
+        Properties property = new Properties();
         try {
-            connection = DriverManager.getConnection("jdbc:firebirdsql://localhost:3050/D:/databases/IGOR.GDB?defaultHoldable=true", "geza", "password");
+            property.put("user", "GEZA");
+            property.put("password", "password");
+            property.put("lc_ctype", "WIN1250");
+            connection = DriverManager.getConnection("jdbc:firebirdsql://localhost:3050/D:/databases/IGOR.GDB?defaultHoldable=true", property);
         } catch (SQLException e) {
             e.printStackTrace();
+            logger.error("DB-hez történő csatlakozás sikertelen", e);
+            logger.debug("DB-hez történő csatlakozás sikertelen. Csatlakozási adatok: "+property);
         }
         return connection;
     }
@@ -41,172 +53,160 @@ public class ProblemReportServiceImpl implements ProblemReportService {
         }
     }
 
+    /**
+     * 1. egy sql lekérdezés
+     * 2. egységes konstruktor hívás, adatbázis mezőkkel
+     * 3. logolás fájlba logbackup
+     * @param compId
+     * @return
+     */
+
+
+    public List<ProblemReport> getProblemReportsListNL(int compId) {
+        List<ProblemReport> result = new ArrayList<>();
+        logger.debug("hibabejelntő lista kérés comp_d="+compId);
+        //lekérdezés összeállítása
+        //eredmény ciklus
+        //  - pr keresése az eredményben0
+        return result;
+    }
+
     @Override
     public List<ProblemReport> getProblemReportsList(int compId) {
+        List<ProblemReport> result = new ArrayList<>();
 
         Connection connection = getConnection();
 
-        List<ProblemReport> problemReportList = new ArrayList<>();
+        List<ProblemReport> resultFromDB = new ArrayList<>();
         List<ProblemReportChange> problemReportChangeList = new ArrayList<>();
 
-        PreparedStatement pstmtGetProblemReports = null;
-        PreparedStatement pstmtGetProblemReportChanges = null;
-        PreparedStatement pstmtGetReportState = null;
-
-
+//      PreparedStatement pstmtGetProblemReports = null;
+//      PreparedStatement pstmtGetProblemReportChanges = null;
+//      PreparedStatement pstmtGetReportState = null;
+        PreparedStatement pstmt = null;
         try {
-            pstmtGetProblemReports = connection.prepareStatement("SELECT * FROM PROBLEM_REPORTS WHERE COMP_ID = ?");
-            pstmtGetProblemReportChanges = connection.prepareStatement("SELECT * FROM PROBLEM_REPORT_CHANGES WHERE PR_ID = ?");
-            pstmtGetReportState = connection.prepareStatement("SELECT name FROM PROBLEM_REPORT_STATES WHERE ID = ?");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+//          pstmtGetProblemReports = connection.prepareStatement("SELECT * FROM PROBLEM_REPORTS WHERE STATE_ID <> 4 and COMP_ID = ?");
+//          pstmtGetProblemReports = connection.prepareStatement("SELECT * FROM PROBLEM_REPORTS WHERE COMP_ID = ?");
+//          pstmtGetProblemReportChanges = connection.prepareStatement("SELECT * FROM PROBLEM_REPORT_CHANGES WHERE PR_ID = ?");
+//          pstmtGetReportState = connection.prepareStatement("SELECT name FROM PROBLEM_REPORT_STATES WHERE ID = ?");
+            pstmt = connection.prepareStatement("select pr.ID as prId, pr.ERROR_TYPE as prErrorType, pr.T_CREATE as prCreationTime, pr.COMP_ID as prCompanyId,\n" +
+                    "pr.VEHICLE_ID as prVehicleId, pr.LICENSE_NO as prLicencePlate, pr.STATE_ID as prActualStateId, prs1.NAME as prStateName,  \n" +
+                    "pr.PARAMS as prParams, prs1.COLOR_HTML as prStateColor, prc.ID as prcID, \n" +
+                    "prc.T as prcTimestamp, prc.CONTACT_NAME as prcReporter, prc.BUG_MESSAGE as prcMessage,\n" +
+                    "prc.PR_ID as prcPrid, prc.STATE_ID as prcStateId, prs2.NAME as prcStateName, prc.BUG_MESSAGE as prcDescription\n" +
+                    "from problem_reports pr\n" +
+                    "join problem_report_changes prc on prc.pr_id = pr.id\n" +
+                    "join problem_report_states prs1 on prs1.id = pr.state_id \n" +
+                    "join problem_report_states prs2 on prs2.id = prc.state_id \n" +
+                    "where pr.comp_id = ?\n" +
+                    "order by pr.id;");
 
-        try {
-            pstmtGetProblemReports.setInt(1, compId);
-            ResultSet problemReportResultSet = pstmtGetProblemReports.executeQuery();
+            pstmt.setInt(1, compId);
+            ResultSet resultSet = pstmt.executeQuery();
 
-            while (problemReportResultSet.next()) {
-
-                String reporterName = "";
-                String reporterEmail = "";
-                String reporterPhoneNumber = "";
-
-                int reportId = problemReportResultSet.getInt("ID");
-                Timestamp reportCreationTime = problemReportResultSet.getTimestamp("T_CREATE");
-                String reportCompId = problemReportResultSet.getString("COMP_ID");
-                String params = problemReportResultSet.getString("PARAMS");
-                String licencePlateNumber = problemReportResultSet.getString("LICENSE_NO");
-
-                String[] paramValues = params.split("\\n");
-
-                for (int i = 0; i < paramValues.length; i++) {
-
-                    if (paramValues[i].length() > 5 && paramValues[i].substring(0, 5).equals("error")) {
-                        break;
-                    } else if (paramValues[i].length() > 8 && paramValues[i].substring(0, 9).equals("contact_n")) {
-                        String[] nameArr = paramValues[i].split("=");
-                        if (nameArr[1].length() > 3) {
-                            reporterName = nameArr[1];
-                        } else {
-                            reporterName = "no data";
-                        }
-
-                    } else if (paramValues[i].length() > 8 && paramValues[i].substring(0, 9).equals("contact_d")) {
-                        String[] contactArr = paramValues[i].split("=");
-                        if (contactArr.length == 2) {
-                            if (contactArr[1].contains("@")) {
-                                reporterEmail = contactArr[1];
-                                reporterPhoneNumber = "no data";
-                            } else if (contactArr[1].trim().length() > 6) {
-                                reporterPhoneNumber = contactArr[1];
-                                reporterEmail = "no data";
-                            } else {
-                                reporterPhoneNumber = "no data";
-                                reporterEmail = "no data";
-                            }
-                        } else if (contactArr.length == 3) {
-                            if (contactArr[1].substring(0, 6).equals("email:")) {
-                                String[] contactArrColon = contactArr[1].split(":");
-                                String[] contactArrColonAndComa = contactArrColon[1].split(",");
-                                reporterEmail = contactArrColonAndComa[0];
-
-                                if (contactArrColonAndComa[1].trim().equals("phone_no")) {
-                                    reporterPhoneNumber = contactArr[2];
-                                }
-                            }
-                        } else {
-                            for (int j = 1; j < contactArr.length - 1; j++) {
-                                if (contactArr[j].equals("email")) {
-                                    String[] emailArr = contactArr[j + 1].split(",");
-                                    if (emailArr[0].contains("@")) {
-                                        reporterEmail = emailArr[0].trim();
-                                        if (emailArr[1].contains("@")) {
-                                            reporterEmail += " és " + emailArr[1].trim();
-                                        }
-                                    } else {
-                                        reporterEmail = "no data";
-                                    }
-                                    if (emailArr[emailArr.length - 1].trim().equals("phone_no")) {
-                                        if (contactArr[j + 2].length() > 6) {
-                                            reporterPhoneNumber = contactArr[j + 2];
-                                        } else {
-                                            reporterPhoneNumber = "no data";
-                                        }
-                                    }
-                                } else if (contactArr[j].equals("phone_no ")) {
-                                    reporterPhoneNumber = contactArr[j + 1];
-                                }
-                            }
-                        }
-                    }
+            while (resultSet.next()) {
+                int id = resultSet.getInt("PRID");
+                ProblemReport tmp = result.stream().filter(pr -> pr.getId() == id).findAny().orElse(null);
+                if (tmp == null) {
+                    tmp = new ProblemReport(id, resultSet.getTimestamp("PRCREATIONTIME").toLocalDateTime(),
+                            resultSet.getString("PARAMS"), resultSet.getInt("PRCOMPANYID"),
+                            resultSet.getString("PRLICENCEPLATE"), resultSet.getInt("PRVEHICLEID"),
+                            ErrorType.valueOfIntErrorType(resultSet.getInt("PRERRORTYPE")),
+                            resultSet.getInt("PRACTUALSTATEID"), resultSet.getString("PRSTATENAME"),
+                            resultSet.getString("PRSTATECOLOR"), resultSet.getString("PRCMESSAGE")
+                    );
+                    result.add(tmp);
                 }
-                ProblemReport pr = new ProblemReport();
-                pr.setReportId(reportId);
-                pr.setReportCreationTime(reportCreationTime);
-                pr.setCompId(reportCompId);
-                pr.setLicencePlateNumber(licencePlateNumber);
-                pr.setReporterName(reporterName);
-                pr.setReporterEmail(reporterEmail);
-                pr.setReporterPhoneNumber(reporterPhoneNumber);
-                pr.setProblemReportChangeList(new ArrayList<ProblemReportChange>());
-
-                try {
-                    pstmtGetProblemReportChanges.setInt(1, reportId);
-                    ResultSet problemReportChangesResultSet = pstmtGetProblemReportChanges.executeQuery();
-
-
-                    while (problemReportChangesResultSet.next()) {
-                        int problemReportId = problemReportChangesResultSet.getInt("PR_ID");
-                        Timestamp stateChangeTime = problemReportChangesResultSet.getTimestamp("T");
-                        int stateChangeActualState = problemReportChangesResultSet.getInt("STATE_ID");
-                        String stateChangeMessage = problemReportChangesResultSet.getString("BUG_MESSAGE");
-                        ProblemReportChange prc = new ProblemReportChange();
-                        prc.setProblemReportId(problemReportId);
-                        prc.setStateChangeTime(stateChangeTime);
-                        prc.setStateChangeMessage(stateChangeMessage);
-
-                        pstmtGetReportState.setInt(1, stateChangeActualState);
-                        ResultSet reportStateResultSet = pstmtGetReportState.executeQuery();
-                        String stateString = "";
-
-                        while (reportStateResultSet.next()) {
-                            stateString = reportStateResultSet.getString("NAME");
-                        }
-
-                        prc.setStateChangeActualState(stateString);
-                        problemReportChangeList.add(prc);
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                problemReportList.add(pr);
+                tmp.getProblemReportChangeList().add(new ProblemReportChange(resultSet.getInt("PRCID"), resultSet.getInt("PRCPRID"),
+                        resultSet.getTimestamp("PRCTIMESTAMP").toLocalDateTime(), resultSet.getString("PRCSTATENAME"),
+                        resultSet.getInt("PRCSTATEID"), resultSet.getString("PRCDESCRIPTION")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                pstmtGetProblemReports.close();
-                pstmtGetProblemReportChanges.close();
-                pstmtGetReportState.close();
-            } catch (SQLException e) {
-                System.err.println(e);
-            }
         }
         closeConnection(connection);
+        result.stream()
+                .filter(problemReport ->problemReport.getLicencePlateNumber() == null || problemReport.getLicencePlateNumber().equals(""))
+                .forEach(problemReport -> {
+                    problemReport.setLicencePlateNumber("no data");
+                });
+//        for(int i = 0; i<resultFromDB.size(); i++){
+//            if (resultFromDB.get(i).getLicencePlateNumber() == null || resultFromDB.get(i).getLicencePlateNumber().equals("")){
+//                resultFromDB.get(i).setLicencePlateNumber("no data");
+//            }
+//        }
+        return result;
+    }
 
-        problemReportChangeList.sort(Comparator.comparingInt(ProblemReportChange::getProblemReportId));
+    @Override
+    public boolean saveNewProblemReport(ProblemReport problemReport){
+        Connection connection = getConnection();
+        PreparedStatement saveNewReport = null;
+        PreparedStatement saveNewReportChange = null;
 
-        for (int i = 0; i < problemReportChangeList.size(); i++) {
+        //*** PROBLEM_REPORTS TABLE ***                                         *** PROBLEM_REPORT_CHANGES ***
+        // ID: INTEGER   NOT NULL!!!!!                                              ID: INTEGER         NOT NULL!!!!!
+        // PR_ID: VARCHAR(32)  NOT NULL!!!!!                                        PR_ID: VARCHAR(32)  NOT NULL!!!!!
+        // T_CREATE: TIMESTAMP NOT NULL!!!!!                                        T: TIMESTAMP
+        // COMP_ID: INTEGER  NOT NULL!!!!!                                          STATE_ID: INTEGER
+        // DISP_ID: INTEGER  NOT NULL!!!!!                                          CONTACT_NAME: VARCHAR(255)       +++
+        // VEHICLE_ID: INTEGER  +++                                                 STATE_CHANGER_NAME: VARCHAR(255) +++
+        // LICENSE_NO: VARCHAR(64)  +++                                             BUG_MESSAGE: VARCHAR(4000)
+        // BOX_ID: INTEGER                                                          INSIDE_MESSAGE: VARCHAR(255)
+        // UNIT_ID: INTEGER                                                         V_SYNC: INTEGER      NOT NULL!!!!!
+        // NODE_ID: INTEGER +++                                                     V_MODIFIED: INTEGER  NOT NULL!!!!!
+        // ERROR_TYPE: SMALLINT  +++
+        // T_INVESTIGATION: TIMESTAMP
+        // PERSON_ID: INTEGER
+        // CLOSED: SMALLINT
+        // PARAMS: VARCHAR(8192) +++
+        // T_CONFIRMATION_SENT: TIMESTAMP
+        // STATE_ID: INTEGER  NOT NULL!!!!!
+        // AGREE_STATUS: INTEGER  NOT NULL!!!!!
+        // LAST_SENT_AGREE_STATUS: INTEGER
+        // WS_ID: INTEGER
+        // V_SYNC: INTEGER   NOT NULL!!!!!
+        // V_MODIFIED: INTEGER  NOT NULL!!!!!
+        // T_SERVICE_CONFIRMATION_SENT: TIMESTAMP
 
-            int tempProblemReportId = problemReportChangeList.get(i).getProblemReportId();
-            for (ProblemReport pr : problemReportList) {
-                if (pr.getReportId() == tempProblemReportId) {
-                    pr.addToProblemReportChangeList(problemReportChangeList.get(i));
-                }
+        LocalDateTime reportCreationTime;        //???
+        Integer compId;     //Session-ből kell majd kiszedni!!!!
+        String actualStatus;                     //???
+        Integer dispId = 0; //Session-ből kell majd kiszedni!!!!
+        Integer nodeId = 0; //Session-ből kell majd kiszedni!!!!
+
+        Integer vehicleId = problemReport.getVehicleId();
+        String licencePlateNumber = problemReport.getLicencePlateNumber();
+        ErrorType errorType = problemReport.getErrorType();
+        String reporterName = problemReport.getReporterName();
+        String reporterEmail = problemReport.getReporterEmail();
+        String reporterPhoneNumber = problemReport.getReporterPhoneNumber();
+        String stateChangeMessage = problemReport.getStateChangeMessage();
+        String params = "contact_name=" + reporterName + " contact_data=" + reporterEmail + ", phone_no=" + reporterPhoneNumber + " problem_desc=" + stateChangeMessage;
+
+        try {
+            saveNewReport = connection.prepareStatement("INSERT INTO PROBLEM_REPORTS (ID, PR_ID, T_CREATE, COMP_ID, DISP_ID, VEHICLE_ID, LICENSE_NO, ERROR_TYPE, PARAMS, STATE_ID, AGREE_STATUS, V_SYNC, V_MODIFIED) " +
+                    "VALUES ('???', '???', 'current_timestamp', '???', 0, vehicleId, licencePlateNumber, errorType, params, actualStatus, '???', 0, 1");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        try {
+            saveNewReportChange = connection.prepareStatement("INSERT INTO PROBLEM_REPORT_CHANGES (ID, PR_ID, T, CONTACT_NAME, BUG_MESSAGE, V_SYNC, V_MODIFIED) " +
+                    "VALUES ('???', '???', 'current_timestamp', '???', reporterName, ");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        finally {
+            try {
+                closeConnection(connection);
+                saveNewReport.close();
+                saveNewReportChange.close();
+            } catch (SQLException ex) {
+                System.err.println(ex);
             }
         }
-        return problemReportList;
+        return true;
     }
 }
-

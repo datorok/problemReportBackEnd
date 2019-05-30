@@ -16,5 +16,6 @@ public interface ProblemReportService {
 //    void modifyAProblemReportChanges(ProblemReport problemReport);
 //    void deleteProblemReport(int reportId);
     List<ProblemReport> getProblemReportsList(int compId);
+    boolean saveNewProblemReport(ProblemReport problemReport);
     //List<ProblemReportChange> getProblemReportChangeListForAReportId(int reportId);
 }

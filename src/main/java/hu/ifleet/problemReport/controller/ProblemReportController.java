@@ -1,7 +1,5 @@
 package hu.ifleet.problemReport.controller;
-
 import hu.ifleet.problemReport.entity.ProblemReport;
-import hu.ifleet.problemReport.entity.ProblemReportChange;
 import hu.ifleet.problemReport.service.ProblemReportServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,7 +22,7 @@ public class ProblemReportController {
     @GetMapping("/hibalista")
     public String hibalista(Model model) {
 
-        List<ProblemReport> problemReportList = problemReportServiceImpl.getProblemReportsList(1055);
+        List<ProblemReport> problemReportList = problemReportServiceImpl.getProblemReportsList(1071);
         model.addAttribute("problemReportList", problemReportList);
         return "hibalista";
     }

@@ -40,6 +40,7 @@
         <tr>
             <th>Részletek</th>
             <th>Bejelentés időpontja</th>
+            <th>Aktuális státusz</th>
             <th>Rendszám</th>
             <th>Bejelentő neve</th>
             <th>Bejelentő e-mail címe</th>
@@ -58,6 +59,7 @@
                 </button>
             </td>
             <td th:text="${problemReport.reportCreationTime}"></td>
+            <td th:text="${problemReport.getActualStatus()}"></td>
             <td th:text="${problemReport.licencePlateNumber}"></td>
             <td th:text="${problemReport.reporterName}"></td>
             <td th:text="${problemReport.reporterEmail}"></td>
@@ -78,7 +80,7 @@
                        <tbody>
                        <tr th:each="problemReportChange, itemStat  : ${problemReport.getProblemReportChangeList()}" th:object="${problemReport}">
                            <td th:text="*{problemReportChangeList[__${itemStat.index}__].getStateChangeTime()}">time</td>
-                           <td th:text="*{problemReportChangeList[__${itemStat.index}__].getStateChangeActualState()}">state</td>
+                           <td th:text="*{problemReportChangeList[__${itemStat.index}__].getStateChangeActualStateString()}">state</td>
                            <td th:text="*{problemReportChangeList[__${itemStat.index}__].getStateChangeMessage()}">message</td>
                        </tr>
                        </tbody>
