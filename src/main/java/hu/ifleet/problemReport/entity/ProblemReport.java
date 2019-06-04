@@ -3,6 +3,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -35,33 +36,34 @@ public class ProblemReport {
     private String reporterPhoneNumber;
     private String licencePlateNumber = "";
     private Integer vehicleId;
+    private Integer errorTypeId;
     private ErrorType errorType;
     private Integer actualStatusId;
     private String actualStatusName;
     private String actualStatusColor;
-    private String stateChangeMessage;
+    private String problemDescription;
     private List<ProblemReportChange> problemReportChangeList = new ArrayList<ProblemReportChange>();
 
-    public ProblemReport(int id, LocalDateTime reportCreationTime, String params, Integer compId,
-                         String licencePlateNumber, int vehicleId, ErrorType errorType,
-                         Integer actualStatusId, String actualStatusName, String actualStatusColor,
-                         String stateChangeMessage) {
+    public ProblemReport(int id, LocalDateTime reportCreationTime, Integer compId, Integer errorTypeId, ErrorType errorType,
+                         int vehicleId, String licencePlateNumber, Integer actualStatusId, String actualStatusName,
+                         String params, String actualStatusColor, String problemDescription) {
         this.id = id;
         this.reportCreationTime = reportCreationTime;
         this.compId = compId;
+        this.errorTypeId = errorTypeId;
+        this.errorType = errorType;
         this.vehicleId = vehicleId;
         this.licencePlateNumber = licencePlateNumber;
-        this.errorType = errorType;
         this.actualStatusId = actualStatusId;
         this.actualStatusName = actualStatusName;
-        this.actualStatusColor = actualStatusColor;
         this.params = params;
-        this.stateChangeMessage = stateChangeMessage;
-        this.problemReportChangeList = new ArrayList<ProblemReportChange>();
-        getDataFromParams(params);
+        this.actualStatusColor = actualStatusColor;
+        this.problemDescription = problemDescription;
+        getDataFromParams();
     }
 
-    public void getDataFromParams(String param){
+    @JsonIgnore
+    private void getDataFromParams(){
         String reporterName = "";
         String reporterEmail = "";
         String reporterPhoneNumber = "";

@@ -57,17 +57,40 @@ public class ProblemReportServiceImpl implements ProblemReportService {
      * 1. egy sql lekérdezés
      * 2. egységes konstruktor hívás, adatbázis mezőkkel
      * 3. logolás fájlba logbackup
-     * @param compId
+     * @param
      * @return
      */
 
+    public List<ProblemReportChange> getProblemReportChangeList(int problemReportId) {
+        List<ProblemReportChange> result = new ArrayList<>();
+        Connection connection = getConnection();
+        PreparedStatement pstmt = null;
+        try {
+        pstmt = connection.prepareStatement("select prc.ID as prcID, prc.T as prcTimestamp, prc.CONTACT_NAME as prcReporter, prc.BUG_MESSAGE as prcMessage,\n" +
+                "prc.PR_ID as prcPrid, prc.STATE_ID as prcStateId, prs.NAME as prcStateName\n" +
+                "from problem_report_changes prc \n" +
+                "join problem_report_states prs on prs.id = prc.state_id\n" +
+                "where prc.pr_id = ?\n" +
+                "order by prc.ID asc;");
+            pstmt.setInt(1, problemReportId);
+            ResultSet resultSet = pstmt.executeQuery();
 
-    public List<ProblemReport> getProblemReportsListNL(int compId) {
-        List<ProblemReport> result = new ArrayList<>();
-        logger.debug("hibabejelntő lista kérés comp_d="+compId);
-        //lekérdezés összeállítása
-        //eredmény ciklus
-        //  - pr keresése az eredményben0
+            while (resultSet.next()) {
+                int id = resultSet.getInt("PRCID");
+                ProblemReportChange tmp = result.stream().filter(prc -> prc.getProblemReportChangeId() == id).findAny().orElse(null);
+                if (tmp == null) {
+                    tmp = new ProblemReportChange(id, resultSet.getInt("PRCPRID"),
+                            resultSet.getTimestamp("PRCTIMESTAMP").toLocalDateTime(), resultSet.getString("PRCSTATENAME"),
+                            resultSet.getInt("PRCSTATEID"), resultSet.getString("PRCMESSAGE")
+                    );
+                    result.add(tmp);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        closeConnection(connection);
+        System.out.println("result.size: " + result.size());
         return result;
     }
 
@@ -77,29 +100,27 @@ public class ProblemReportServiceImpl implements ProblemReportService {
 
         Connection connection = getConnection();
 
-        List<ProblemReport> resultFromDB = new ArrayList<>();
-        List<ProblemReportChange> problemReportChangeList = new ArrayList<>();
-
-//      PreparedStatement pstmtGetProblemReports = null;
-//      PreparedStatement pstmtGetProblemReportChanges = null;
-//      PreparedStatement pstmtGetReportState = null;
         PreparedStatement pstmt = null;
         try {
 //          pstmtGetProblemReports = connection.prepareStatement("SELECT * FROM PROBLEM_REPORTS WHERE STATE_ID <> 4 and COMP_ID = ?");
 //          pstmtGetProblemReports = connection.prepareStatement("SELECT * FROM PROBLEM_REPORTS WHERE COMP_ID = ?");
 //          pstmtGetProblemReportChanges = connection.prepareStatement("SELECT * FROM PROBLEM_REPORT_CHANGES WHERE PR_ID = ?");
 //          pstmtGetReportState = connection.prepareStatement("SELECT name FROM PROBLEM_REPORT_STATES WHERE ID = ?");
-            pstmt = connection.prepareStatement("select pr.ID as prId, pr.ERROR_TYPE as prErrorType, pr.T_CREATE as prCreationTime, pr.COMP_ID as prCompanyId,\n" +
-                    "pr.VEHICLE_ID as prVehicleId, pr.LICENSE_NO as prLicencePlate, pr.STATE_ID as prActualStateId, prs1.NAME as prStateName,  \n" +
-                    "pr.PARAMS as prParams, prs1.COLOR_HTML as prStateColor, prc.ID as prcID, \n" +
-                    "prc.T as prcTimestamp, prc.CONTACT_NAME as prcReporter, prc.BUG_MESSAGE as prcMessage,\n" +
-                    "prc.PR_ID as prcPrid, prc.STATE_ID as prcStateId, prs2.NAME as prcStateName, prc.BUG_MESSAGE as prcDescription\n" +
+            pstmt = connection.prepareStatement("select pr.ID as prId, \n" +
+                    "pr.T_CREATE as prCreationTime, \n" +
+                    "pr.COMP_ID as prCompanyId,\n" +
+                    "pr.ERROR_TYPE as prErrorType, \n" +
+                    "pr.VEHICLE_ID as prVehicleId, \n" +
+                    "pr.LICENSE_NO as prLicencePlate, \n" +
+                    "pr.STATE_ID as prActualStateId, \n" +
+                    "prs.NAME as prStateName,  \n" +
+                    "pr.PARAMS as prParams, \n" +
+                    "prs.COLOR_HTML as prStateColor, \n" +
+                    "prc.bug_message as prActualState \n" +
                     "from problem_reports pr\n" +
                     "join problem_report_changes prc on prc.pr_id = pr.id\n" +
-                    "join problem_report_states prs1 on prs1.id = pr.state_id \n" +
-                    "join problem_report_states prs2 on prs2.id = prc.state_id \n" +
-                    "where pr.comp_id = ?\n" +
-                    "order by pr.id;");
+                    "join problem_report_states prs on prs.id = pr.state_id and prc.state_id = 0\n" +
+                    "where pr.comp_id = ?;");
 
             pstmt.setInt(1, compId);
             ResultSet resultSet = pstmt.executeQuery();
@@ -108,28 +129,41 @@ public class ProblemReportServiceImpl implements ProblemReportService {
                 int id = resultSet.getInt("PRID");
                 ProblemReport tmp = result.stream().filter(pr -> pr.getId() == id).findAny().orElse(null);
                 if (tmp == null) {
+//                    tmp = new ProblemReport(id, resultSet.getTimestamp("PRCREATIONTIME").toLocalDateTime(),
+//                            resultSet.getString("PARAMS"), resultSet.getInt("PRCOMPANYID"),
+//                            resultSet.getObject("PRLICENCEPLATE")==null ? "no data" : resultSet.getString("PRLICENCEPLATE"), resultSet.getInt("PRVEHICLEID"),
+//                            resultSet.getInt("PRERRORTYPE"), ErrorType.valueOfIntErrorType(resultSet.getInt("PRERRORTYPE")),
+//                            resultSet.getInt("PRACTUALSTATEID"), resultSet.getString("PRSTATENAME"),
+//                            resultSet.getString("PRSTATECOLOR"), resultSet.getString("PRCMESSAGE")
+//                    );
+//                    result.add(tmp);
+//                }
+//                tmp.getProblemReportChangeList().add(new ProblemReportChange(resultSet.getInt("PRCID"), resultSet.getInt("PRCPRID"),
+//                        resultSet.getTimestamp("PRCTIMESTAMP").toLocalDateTime(), resultSet.getString("PRCSTATENAME"),
+//                        resultSet.getInt("PRCSTATEID"), resultSet.getString("PRCDESCRIPTION")));
+//            }
+
                     tmp = new ProblemReport(id, resultSet.getTimestamp("PRCREATIONTIME").toLocalDateTime(),
-                            resultSet.getString("PARAMS"), resultSet.getInt("PRCOMPANYID"),
-                            resultSet.getString("PRLICENCEPLATE"), resultSet.getInt("PRVEHICLEID"),
+                             resultSet.getInt("PRCOMPANYID"), resultSet.getInt("PRERRORTYPE"),
                             ErrorType.valueOfIntErrorType(resultSet.getInt("PRERRORTYPE")),
+                            resultSet.getInt("PRVEHICLEID"),
+                            resultSet.getObject("PRLICENCEPLATE") == null ? "no data" : resultSet.getString("PRLICENCEPLATE"),
                             resultSet.getInt("PRACTUALSTATEID"), resultSet.getString("PRSTATENAME"),
-                            resultSet.getString("PRSTATECOLOR"), resultSet.getString("PRCMESSAGE")
+                            resultSet.getString("PARAMS"),
+                            resultSet.getString("PRSTATECOLOR"), resultSet.getString("PRACTUALSTATE")
                     );
                     result.add(tmp);
                 }
-                tmp.getProblemReportChangeList().add(new ProblemReportChange(resultSet.getInt("PRCID"), resultSet.getInt("PRCPRID"),
-                        resultSet.getTimestamp("PRCTIMESTAMP").toLocalDateTime(), resultSet.getString("PRCSTATENAME"),
-                        resultSet.getInt("PRCSTATEID"), resultSet.getString("PRCDESCRIPTION")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         closeConnection(connection);
-        result.stream()
-                .filter(problemReport ->problemReport.getLicencePlateNumber() == null || problemReport.getLicencePlateNumber().equals(""))
-                .forEach(problemReport -> {
-                    problemReport.setLicencePlateNumber("no data");
-                });
+//        result.stream()
+//                .filter(problemReport ->problemReport.getLicencePlateNumber() == null || problemReport.getLicencePlateNumber().equals(""))
+//                .forEach(problemReport -> {
+//                    problemReport.setLicencePlateNumber("no data");
+//                });
 //        for(int i = 0; i<resultFromDB.size(); i++){
 //            if (resultFromDB.get(i).getLicencePlateNumber() == null || resultFromDB.get(i).getLicencePlateNumber().equals("")){
 //                resultFromDB.get(i).setLicencePlateNumber("no data");
@@ -181,12 +215,13 @@ public class ProblemReportServiceImpl implements ProblemReportService {
         String reporterName = problemReport.getReporterName();
         String reporterEmail = problemReport.getReporterEmail();
         String reporterPhoneNumber = problemReport.getReporterPhoneNumber();
-        String stateChangeMessage = problemReport.getStateChangeMessage();
+        String stateChangeMessage = problemReport.getProblemDescription();
         String params = "contact_name=" + reporterName + " contact_data=" + reporterEmail + ", phone_no=" + reporterPhoneNumber + " problem_desc=" + stateChangeMessage;
 
         try {
-            saveNewReport = connection.prepareStatement("INSERT INTO PROBLEM_REPORTS (ID, PR_ID, T_CREATE, COMP_ID, DISP_ID, VEHICLE_ID, LICENSE_NO, ERROR_TYPE, PARAMS, STATE_ID, AGREE_STATUS, V_SYNC, V_MODIFIED) " +
-                    "VALUES ('???', '???', 'current_timestamp', '???', 0, vehicleId, licencePlateNumber, errorType, params, actualStatus, '???', 0, 1");
+            saveNewReport = connection.prepareStatement("INSERT OR UPDATE INTO PROBLEM_REPORTS (ID, PR_ID, T_CREATE, COMP_ID, DISP_ID, VEHICLE_ID, LICENSE_NO, ERROR_TYPE, PARAMS, STATE_ID, AGREE_STATUS, V_SYNC, V_MODIFIED) " +
+                    "VALUES ( '???', '???', 'current_timestamp', '???', 0, vehicleId, licencePlateNumber, errorType, params, actualStatus, '???', 0, 1 ) mathcing(id) ");
+
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

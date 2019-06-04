@@ -1,6 +1,5 @@
 package hu.ifleet.problemReport;
-
-import hu.ifleet.problemReport.entity.ProblemReport;
+import hu.ifleet.problemReport.entity.ProblemReportChange;
 import hu.ifleet.problemReport.service.ProblemReportServiceImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -52,6 +51,9 @@ public class ProblemReportApplication {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
+
+        ProblemReportServiceImpl prsi = new ProblemReportServiceImpl();
+        List<ProblemReportChange> prcl = prsi.getProblemReportChangeList(14650);
 
     }
     //CORS (Cross-Origin Resource Sharing) beállításai

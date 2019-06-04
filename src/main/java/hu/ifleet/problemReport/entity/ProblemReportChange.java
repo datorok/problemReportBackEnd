@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 //@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProblemReportChange {
-    private int id;
+    private int problemReportChangeId;
     private int problemReportId;
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
@@ -36,8 +36,8 @@ public class ProblemReportChange {
     private int stateChangeActualStateInt;
     private String stateChangeMessage;
 
-    public ProblemReportChange(int id, int problemReportId, LocalDateTime stateChangeTime, String stateChangeActualStateString, int stateChangeActualStateInt, String stateChangeMessage) {
-        this.id = id;
+    public ProblemReportChange(int problemReportChangeId, int problemReportId, LocalDateTime stateChangeTime, String stateChangeActualStateString, int stateChangeActualStateInt, String stateChangeMessage) {
+        this.problemReportChangeId = problemReportChangeId;
         this.problemReportId = problemReportId;
         this.stateChangeTime = stateChangeTime;
         this.stateChangeActualStateString = stateChangeActualStateString;
@@ -45,8 +45,8 @@ public class ProblemReportChange {
         this.stateChangeMessage = stateChangeMessage;
     }
 
-    public ProblemReportChange(int id, LocalDateTime stateChangeTime, int stateChangeActualStateInt) {
-        this.id = id;
+    public ProblemReportChange(int problemReportChangeId, LocalDateTime stateChangeTime, int stateChangeActualStateInt) {
+        this.problemReportChangeId = problemReportChangeId;
         this.stateChangeTime = stateChangeTime;
         this.stateChangeActualStateInt = stateChangeActualStateInt;
     }
