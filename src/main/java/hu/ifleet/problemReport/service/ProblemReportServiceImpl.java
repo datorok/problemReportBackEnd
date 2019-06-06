@@ -90,7 +90,7 @@ public class ProblemReportServiceImpl implements ProblemReportService {
             e.printStackTrace();
         }
         closeConnection(connection);
-        System.out.println("result.size: " + result.size());
+//        System.out.println("result.size: " + result.size());
         return result;
     }
 
@@ -216,24 +216,35 @@ public class ProblemReportServiceImpl implements ProblemReportService {
         String reporterEmail = problemReport.getReporterEmail();
         String reporterPhoneNumber = problemReport.getReporterPhoneNumber();
         String stateChangeMessage = problemReport.getProblemDescription();
-        String params = "contact_name=" + reporterName + " contact_data=" + reporterEmail + ", phone_no=" + reporterPhoneNumber + " problem_desc=" + stateChangeMessage;
+        String params = "contact_name=\"" + reporterName + " contact_data=" + reporterEmail + ", phone_no=" + reporterPhoneNumber + " problem_desc=" + stateChangeMessage+"\"";
 
         try {
+            if( problemReport.getId()==-1 ){
+                PreparedStatement pst = connection.prepareStatement("select first 1 gen_id(gen_problem_reports,1) from rdb$database;");
+                ResultSet rs = pst.executeQuery();
+                if( rs.next() ) {
+                    problemReport.setId(rs.getInt(1));
+                }
+                rs.close();
+                pst.close();
+            }
+
             saveNewReport = connection.prepareStatement("INSERT OR UPDATE INTO PROBLEM_REPORTS (ID, PR_ID, T_CREATE, COMP_ID, DISP_ID, VEHICLE_ID, LICENSE_NO, ERROR_TYPE, PARAMS, STATE_ID, AGREE_STATUS, V_SYNC, V_MODIFIED) " +
-                    "VALUES ( '???', '???', 'current_timestamp', '???', 0, vehicleId, licencePlateNumber, errorType, params, actualStatus, '???', 0, 1 ) mathcing(id) ");
+                    "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 1 ) mathcing(id) ");
+            saveNewReport.setInt(1, problemReport.getId());
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-        try {
+            saveNewReport.execute();
+
             saveNewReportChange = connection.prepareStatement("INSERT INTO PROBLEM_REPORT_CHANGES (ID, PR_ID, T, CONTACT_NAME, BUG_MESSAGE, V_SYNC, V_MODIFIED) " +
                     "VALUES ('???', '???', 'current_timestamp', '???', reporterName, ");
+
+            PreparedStatement pst = connection.prepareStatement("select first 1 gen_id(gen_v_id,1) from rdb$database;;");
+            pst.execute();
+            pst.close();
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
-        }
-        finally {
+        } finally {
             try {
                 closeConnection(connection);
                 saveNewReport.close();

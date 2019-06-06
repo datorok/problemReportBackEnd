@@ -52,9 +52,6 @@ public class ProblemReportApplication {
 //            e.printStackTrace();
 //        }
 
-        ProblemReportServiceImpl prsi = new ProblemReportServiceImpl();
-        List<ProblemReportChange> prcl = prsi.getProblemReportChangeList(14650);
-
     }
     //CORS (Cross-Origin Resource Sharing) beállításai
     @Bean

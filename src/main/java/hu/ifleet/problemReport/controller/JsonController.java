@@ -10,9 +10,8 @@ import hu.ifleet.sessionmicroservice.model.response.FxSessionResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -32,32 +31,30 @@ public class JsonController {
 
     @GetMapping("/hibalistajson")
     public ResponseEntity<List<ProblemReport>> getProblemReportList(@RequestParam(value = "sessionId",required = true) String sessionId) throws InterruptedException, ExecutionException, URISyntaxException, IOException, FxSessionException {
-        FxSessionResult sessionfx = null;
-
-        sessionfx = new FxSession(/*"problem_report_fx"*/ "log_sheet_generator").checkSessionBlocking(sessionId,"", new ArrayList<>(), null);
+        System.out.println("sessionId: " + sessionId);
+        FxSessionResult sessionfx = FxSession.getInstance("problem_report_fx").checkSessionBlocking(sessionId);
 
         System.out.println("sessionfx of hibalista: "+sessionfx);
         return new ResponseEntity<>(problemReportServiceImpl.getProblemReportsList(sessionfx.getComp_id()), HttpStatus.OK);
     }
 
     @GetMapping("/valtozasjson")
-    public List<ProblemReportChange> getProblemReportChangeList(@RequestParam(value = "sessionId",required = true) String sessionId, @RequestParam(name = "problemReportId", required = true) int problemReportId)
+    public ResponseEntity<List<ProblemReportChange>> getProblemReportChangeList(@RequestParam(value = "sessionId",required = true) String sessionId, @RequestParam(name = "problemReportId", required = true) int problemReportId)
             throws InterruptedException, ExecutionException, URISyntaxException, IOException, FxSessionException {
 
-        FxSessionResult sessionfx = null;
-
-        sessionfx = new FxSession(/*"problem_report_fx"*/ "log_sheet_generator").checkSessionBlocking(sessionId,"", new ArrayList<>(), null);
+        FxSessionResult sessionfx =  FxSession.getInstance("problem_report_fx").checkSessionBlocking(sessionId);
 
         System.out.println("sessionfx of valtozasok: "+sessionfx);
-        return new ArrayList<>(problemReportServiceImpl.getProblemReportChangeList(problemReportId));
+        List<ProblemReportChange> result = problemReportServiceImpl.getProblemReportChangeList(problemReportId);
+        System.out.println(result.toString());
+        return new ResponseEntity(result,HttpStatus.OK);
     }
 
     @GetMapping("/jarmuvekjson")
     public ResponseEntity<List<Object>> getJarmuvekList(@RequestParam(value = "sessionId",required = true) String sessionId) throws InterruptedException, ExecutionException, URISyntaxException, IOException, FxSessionException {
+    System.out.println("session: "+ sessionId);
 
-        FxSessionResult sessionfx = null;
-
-        sessionfx = new FxSession(/*"problem_report_fx"*/ "log_sheet_generator").datavehicleSessionBlocking(sessionId,"", "fleet_state", true);
+        FxSessionResult sessionfx = FxSession.getInstance("problem_report_fx").datavehicleSessionBlocking(sessionId,"fleet_state"); //fleet_state helyett a hibabejelentő mostani funkciókódját (action) kell majd beírni
 
         System.out.println("sessionfx of jarmuvek: "+sessionfx);
 //        return new ResponseEntity(sessionfx.getVehicles().stream().map(vehicle-> new Vehicle(vehicle.getId(), vehicle.getLicense_no())).collect(Collectors.toList()), HttpStatus.OK);
@@ -65,6 +62,12 @@ public class JsonController {
                 .map(vehicle -> new Vehicle(vehicle.getId(), vehicle.getLicense_no()))
                 .collect(Collectors.toList());
         return new ResponseEntity(vehicle_list, HttpStatus.OK);
+    }
+
+    @PostMapping("/problemreportpersist")
+    public void saveNewProblemReport(@RequestBody ProblemReport problemreport){
+
+        problemReportServiceImpl.saveNewProblemReport(problemreport);
     }
 
 //    @GetMapping("/hibalistajson")

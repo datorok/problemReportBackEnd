@@ -1496,3 +1496,111 @@ com.fasterxml.jackson.databind.exc.InvalidDefinitionException: No serializer fou
 2019-06-04 12:55:38.085 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
 2019-06-04 12:55:52.459 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
 2019-06-04 12:56:25.373 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 13:24:32.012 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 13:24:37.235 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 13:24:49.895 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 13:24:51.249 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 13:24:56.492 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 13:25:00.629 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 13:25:06.769 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 13:25:08.965 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 13:25:11.307 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 13:26:18.392 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 13:53:57.200 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 13:54:03.642 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 13:54:08.396 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 13:54:17.229 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 13:54:37.463 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 13:54:44.767 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 13:54:49.245 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 13:55:02.237 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 13:55:04.618 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 13:55:37.850 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 14:23:39.907 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 14:23:40.946 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 14:23:41.533 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 14:24:01.267 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 14:24:02.085 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 14:24:22.460 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 14:24:22.498 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 14:24:31.244 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 14:24:48.901 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 14:25:15.707 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 14:53:12.611 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 14:53:22.508 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 14:53:30.754 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 14:53:38.554 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 14:53:47.007 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 14:53:54.756 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 14:54:08.637 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 14:54:14.756 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 14:54:22.169 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 14:55:10.889 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 15:19:49.907 INFO  http-nio-8091-exec-6 o.a.coyote.http11.Http11Processor - Error parsing HTTP request header
+ Note: further occurrences of HTTP request parsing errors will be logged at DEBUG level.
+java.lang.IllegalArgumentException: Invalid character found in the request target. The valid characters are defined in RFC 7230 and RFC 3986
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:467)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:294)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:66)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:834)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1415)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:834)
+2019-06-04 15:21:11.830 INFO  http-nio-8091-exec-9 o.a.coyote.http11.Http11Processor - Error parsing HTTP request header
+ Note: further occurrences of HTTP request parsing errors will be logged at DEBUG level.
+java.lang.IllegalArgumentException: Invalid character found in the request target. The valid characters are defined in RFC 7230 and RFC 3986
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:467)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:294)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:66)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:834)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1415)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:834)
+2019-06-04 15:22:46.675 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 15:22:53.354 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 15:23:13.047 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 15:23:17.956 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 15:23:25.946 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 15:23:28.446 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 15:23:35.901 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 15:23:46.706 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 15:23:49.897 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 15:24:43.700 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 15:52:08.053 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 15:52:18.138 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 15:52:34.462 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 15:53:04.049 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 15:53:09.326 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 15:53:18.820 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 15:53:21.261 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 15:53:23.449 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 15:53:31.979 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 15:54:01.283 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 16:21:39.193 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 16:21:50.388 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 16:22:12.075 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 16:22:24.394 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 16:22:50.091 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 16:22:53.412 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 16:23:04.068 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 16:23:04.222 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 16:23:10.260 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 16:23:31.960 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 16:51:13.592 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 16:51:42.101 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 16:51:47.585 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 16:52:05.134 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 16:52:27.614 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 16:52:30.966 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 16:52:34.885 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 16:52:40.032 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 16:52:47.002 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 16:53:15.005 WARN  HikariPool-1 connection adder o.f.jca.FBManagedConnection - WARNING: No connection character set specified (property lc_ctype, encoding, charSet or localEncoding), defaulting to character set NONE
+2019-06-04 17:20:39.992 INFO  Thread-4 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2019-06-04 17:20:40.005 INFO  Thread-4 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
