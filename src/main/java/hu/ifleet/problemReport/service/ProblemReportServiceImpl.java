@@ -202,6 +202,7 @@ public class ProblemReportServiceImpl implements ProblemReportService {
                 ", phone_no=" + problemReport.getReporterPhoneNumber() + " problem_desc=" +
                 problemReport.getProblemDescription()+"\"";
         String prid;
+        int newChangeStateId;
         try {
             if( problemReport.getId() < 1){
                 int generatedID =0;
@@ -216,8 +217,11 @@ public class ProblemReportServiceImpl implements ProblemReportService {
                 }
                 prid = "pr-" + sdf.format(today) + "-"+(generatedID+1);
                 problemReport.setPrid(prid);
+                newChangeStateId = 0;
                 rs.close();
                 pst.close();
+            } else {
+                newChangeStateId = 6;
             }
             System.out.println("OBJECT BEFORE SAVING: ");
             System.out.println(problemReport);
@@ -243,9 +247,9 @@ public class ProblemReportServiceImpl implements ProblemReportService {
                 problemReportChangeId = generatedPRC.getInt(1);
             }
             pst.close();
-            saveNewReportChange = connection.prepareStatement("INSERT INTO PROBLEM_REPORT_CHANGES (ID, PR_ID, T, CONTACT_NAME, " +
+            saveNewReportChange = connection.prepareStatement("INSERT INTO PROBLEM_REPORT_CHANGES (ID, PR_ID, T, STATE_ID, CONTACT_NAME, " +
                     "BUG_MESSAGE, V_MODIFIED) " +
-                    "VALUES (?, ?, ?, ?, ?, 1);");
+                    "VALUES (?, ?, ?, newChangeStateId, ?, ?, 1);");
             saveNewReportChange.setInt(1, problemReportChangeId);                                         //ID
             saveNewReportChange.setInt(2, problemReport.getId());                                         //PR_ID
             saveNewReportChange.setTimestamp(3, Timestamp.valueOf(problemReport.getReportCreationTime()));//T

@@ -32,7 +32,7 @@ public class JsonController {
     public ResponseEntity<List<ProblemReport>> getProblemReportList(@RequestParam(value = "sessionId",required = true) String sessionId) throws InterruptedException, ExecutionException, URISyntaxException, IOException, FxSessionException {
         System.out.println("sessionId: " + sessionId);
         FxSessionResult sessionfx = FxSession.getInstance("problem_report_fx").checkSessionBlocking(sessionId);
-
+        System.out.println("COMPID: "+ sessionfx.getComp_id());
         System.out.println("sessionfx of hibalista: "+sessionfx);
         return new ResponseEntity<>(problemReportServiceImpl.getProblemReportsList(sessionfx.getComp_id()), HttpStatus.OK);
     }
