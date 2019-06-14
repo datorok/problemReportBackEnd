@@ -1,11 +1,12 @@
 package hu.ifleet.problemReport.service;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Date;
 
 import hu.ifleet.problemReport.entity.ErrorType;
 import hu.ifleet.problemReport.entity.ProblemReport;
@@ -13,7 +14,6 @@ import hu.ifleet.problemReport.entity.ProblemReportChange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import static hu.ifleet.problemReport.entity.ErrorType.valueOfIntErrorType;
 
 /**
  * Author: torokdaniel
@@ -52,14 +52,6 @@ public class ProblemReportServiceImpl implements ProblemReportService {
             }
         }
     }
-
-    /**
-     * 1. egy sql lekérdezés
-     * 2. egységes konstruktor hívás, adatbázis mezőkkel
-     * 3. logolás fájlba logbackup
-     * @param
-     * @return
-     */
 
     public List<ProblemReportChange> getProblemReportChangeList(int problemReportId) {
         List<ProblemReportChange> result = new ArrayList<>();
@@ -107,6 +99,7 @@ public class ProblemReportServiceImpl implements ProblemReportService {
 //          pstmtGetProblemReportChanges = connection.prepareStatement("SELECT * FROM PROBLEM_REPORT_CHANGES WHERE PR_ID = ?");
 //          pstmtGetReportState = connection.prepareStatement("SELECT name FROM PROBLEM_REPORT_STATES WHERE ID = ?");
             pstmt = connection.prepareStatement("select pr.ID as prId, \n" +
+                    "pr.PR_ID as prPrid, \n" +
                     "pr.T_CREATE as prCreationTime, \n" +
                     "pr.COMP_ID as prCompanyId,\n" +
                     "pr.ERROR_TYPE as prErrorType, \n" +
@@ -143,7 +136,7 @@ public class ProblemReportServiceImpl implements ProblemReportService {
 //                        resultSet.getInt("PRCSTATEID"), resultSet.getString("PRCDESCRIPTION")));
 //            }
 
-                    tmp = new ProblemReport(id, resultSet.getTimestamp("PRCREATIONTIME").toLocalDateTime(),
+                    tmp = new ProblemReport(id, resultSet.getString("PRPRID"), resultSet.getTimestamp("PRCREATIONTIME").toLocalDateTime(),
                              resultSet.getInt("PRCOMPANYID"), resultSet.getInt("PRERRORTYPE"),
                             ErrorType.valueOfIntErrorType(resultSet.getInt("PRERRORTYPE")),
                             resultSet.getInt("PRVEHICLEID"),
@@ -174,10 +167,11 @@ public class ProblemReportServiceImpl implements ProblemReportService {
 
     @Override
     public boolean saveNewProblemReport(ProblemReport problemReport){
+        System.out.println("problemReport:");
+        System.out.println(problemReport);
         Connection connection = getConnection();
         PreparedStatement saveNewReport = null;
         PreparedStatement saveNewReportChange = null;
-
         //*** PROBLEM_REPORTS TABLE ***                                         *** PROBLEM_REPORT_CHANGES ***
         // ID: INTEGER   NOT NULL!!!!!                                              ID: INTEGER         NOT NULL!!!!!
         // PR_ID: VARCHAR(32)  NOT NULL!!!!!                                        PR_ID: VARCHAR(32)  NOT NULL!!!!!
@@ -202,45 +196,61 @@ public class ProblemReportServiceImpl implements ProblemReportService {
         // V_SYNC: INTEGER   NOT NULL!!!!!
         // V_MODIFIED: INTEGER  NOT NULL!!!!!
         // T_SERVICE_CONFIRMATION_SENT: TIMESTAMP
-
-        LocalDateTime reportCreationTime;        //???
-        Integer compId;     //Session-ből kell majd kiszedni!!!!
-        String actualStatus;                     //???
-        Integer dispId = 0; //Session-ből kell majd kiszedni!!!!
-        Integer nodeId = 0; //Session-ből kell majd kiszedni!!!!
-
-        Integer vehicleId = problemReport.getVehicleId();
-        String licencePlateNumber = problemReport.getLicencePlateNumber();
-        ErrorType errorType = problemReport.getErrorType();
-        String reporterName = problemReport.getReporterName();
-        String reporterEmail = problemReport.getReporterEmail();
-        String reporterPhoneNumber = problemReport.getReporterPhoneNumber();
-        String stateChangeMessage = problemReport.getProblemDescription();
-        String params = "contact_name=\"" + reporterName + " contact_data=" + reporterEmail + ", phone_no=" + reporterPhoneNumber + " problem_desc=" + stateChangeMessage+"\"";
-
+        Date today = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String params = "contact_name=\"" +  problemReport.getReporterName() + " contact_data=" + problemReport.getReporterEmail() +
+                ", phone_no=" + problemReport.getReporterPhoneNumber() + " problem_desc=" +
+                problemReport.getProblemDescription()+"\"";
+        String prid;
         try {
             if( problemReport.getId()==-1 ){
-                PreparedStatement pst = connection.prepareStatement("select first 1 gen_id(gen_problem_reports,1) from rdb$database;");
+                PreparedStatement pst = connection.prepareStatement("select first 1 gen_id(gen_problem_reports,1) " +
+                        "from rdb$database;");
                 ResultSet rs = pst.executeQuery();
                 if( rs.next() ) {
                     problemReport.setId(rs.getInt(1));
+                    problemReport.setReportCreationTime(LocalDateTime.now());
                 }
+                prid = "pr-" + sdf.format(today) + "-"+(problemReport.getId()+1);
                 rs.close();
                 pst.close();
+            } else {
+                prid = problemReport.getPrid();
             }
-
-            saveNewReport = connection.prepareStatement("INSERT OR UPDATE INTO PROBLEM_REPORTS (ID, PR_ID, T_CREATE, COMP_ID, DISP_ID, VEHICLE_ID, LICENSE_NO, ERROR_TYPE, PARAMS, STATE_ID, AGREE_STATUS, V_SYNC, V_MODIFIED) " +
-                    "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 1 ) mathcing(id) ");
-            saveNewReport.setInt(1, problemReport.getId());
-
+            saveNewReport = connection.prepareStatement("UPDATE OR INSERT INTO PROBLEM_REPORTS (ID, PR_ID, " +
+                    "T_CREATE, COMP_ID, DISP_ID, VEHICLE_ID, LICENSE_NO, ERROR_TYPE, PARAMS, STATE_ID, V_MODIFIED) " +
+                    "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1 ) matching(id);");
+            saveNewReport.setInt(1, problemReport.getId());                                           //ID
+            saveNewReport.setString(2, prid);                                                         //PR_ID
+            saveNewReport.setTimestamp(3, Timestamp.valueOf(problemReport.getReportCreationTime()));  //T_CREATE
+            saveNewReport.setInt(4, problemReport.getCompId());                                       //COMP_ID
+            saveNewReport.setInt(5, problemReport.getDispId());                                       //DISP_ID
+            saveNewReport.setInt(6, problemReport.getVehicleId());                                    //VEHICLE_ID
+            saveNewReport.setString(7, problemReport.getLicencePlateNumber());                        //LICENSE_NO
+            saveNewReport.setInt(8, problemReport.getErrorTypeId());                                  //ERROR_TYPE
+            saveNewReport.setString(9, params);                                                       //PARAMS
+            saveNewReport.setInt(10, problemReport.getActualStatusId());                              //STATE_ID
             saveNewReport.execute();
-
-            saveNewReportChange = connection.prepareStatement("INSERT INTO PROBLEM_REPORT_CHANGES (ID, PR_ID, T, CONTACT_NAME, BUG_MESSAGE, V_SYNC, V_MODIFIED) " +
-                    "VALUES ('???', '???', 'current_timestamp', '???', reporterName, ");
-
-            PreparedStatement pst = connection.prepareStatement("select first 1 gen_id(gen_v_id,1) from rdb$database;;");
-            pst.execute();
+            int problemReportChangeId = 0;
+            PreparedStatement pst = connection.prepareStatement("select first 1 gen_id(gen_problem_report_changes,1) " +
+                    "from rdb$database;");
+            ResultSet generatedPRC = pst.executeQuery();
+            if( generatedPRC.next() ) {
+                problemReportChangeId = generatedPRC.getInt(1);
+            }
             pst.close();
+            saveNewReportChange = connection.prepareStatement("INSERT INTO PROBLEM_REPORT_CHANGES (ID, PR_ID, T, CONTACT_NAME, " +
+                    "BUG_MESSAGE) " +
+                    "VALUES (?, ?, ?, ?, ?);");
+            saveNewReportChange.setInt(1, problemReportChangeId);                                         //ID
+            saveNewReportChange.setInt(2, problemReport.getId());                                         //PR_ID
+            saveNewReportChange.setTimestamp(3, Timestamp.valueOf(problemReport.getReportCreationTime()));//T
+            saveNewReportChange.setString(4, problemReport.getReporterName());
+            saveNewReportChange.setString(5,problemReport.getProblemDescription());
+            saveNewReportChange.execute();
+            PreparedStatement pstGen = connection.prepareStatement("select first 1 gen_id(gen_v_id,1) from rdb$database;");
+            pstGen.execute();
+            pstGen.close();
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

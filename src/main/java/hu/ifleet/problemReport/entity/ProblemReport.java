@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProblemReport {
     private int id;
-//    private Timestamp reportCreationTime;
+    private String prid;
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
@@ -42,11 +42,13 @@ public class ProblemReport {
     private String actualStatusName;
     private String actualStatusColor;
     private String problemDescription;
+    private Integer dispId;
     private List<ProblemReportChange> problemReportChangeList = new ArrayList<ProblemReportChange>();
 
-    public ProblemReport(int id, LocalDateTime reportCreationTime, Integer compId, Integer errorTypeId, ErrorType errorType,
+    public ProblemReport(int id, String prid, LocalDateTime reportCreationTime, Integer compId, Integer errorTypeId, ErrorType errorType,
                          int vehicleId, String licencePlateNumber, Integer actualStatusId, String actualStatusName,
                          String params, String actualStatusColor, String problemDescription) {
+        this.prid = prid;
         this.id = id;
         this.reportCreationTime = reportCreationTime;
         this.compId = compId;

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -65,9 +64,16 @@ public class JsonController {
     }
 
     @PostMapping("/problemreportpersist")
-    public void saveNewProblemReport(@RequestBody ProblemReport problemreport){
-
+    public void saveNewProblemReport(@RequestBody ProblemReport problemreport, @RequestParam String sessionId)
+            throws InterruptedException, ExecutionException, URISyntaxException, IOException, FxSessionException{
+        System.out.println(sessionId);
+        System.out.println("PROBLEMREPORT: ");
+        System.out.println(problemreport);
+        FxSessionResult sessionfx =  FxSession.getInstance("problem_report_fx").checkSessionBlocking(sessionId);
+        problemreport.setCompId(sessionfx.getComp_id());
+        problemreport.setDispId(sessionfx.getDisp_id());
         problemReportServiceImpl.saveNewProblemReport(problemreport);
+
     }
 
 //    @GetMapping("/hibalistajson")
