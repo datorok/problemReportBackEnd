@@ -1,5 +1,8 @@
 HELP.md
+/log/
 /target/
+*.log
+.eslintcache
 !.mvn/wrapper/maven-wrapper.jar
 
 ### STS ###

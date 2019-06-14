@@ -203,25 +203,29 @@ public class ProblemReportServiceImpl implements ProblemReportService {
                 problemReport.getProblemDescription()+"\"";
         String prid;
         try {
-            if( problemReport.getId()==-1 ){
+            if( problemReport.getId() < 1){
+                int generatedID =0;
                 PreparedStatement pst = connection.prepareStatement("select first 1 gen_id(gen_problem_reports,1) " +
                         "from rdb$database;");
                 ResultSet rs = pst.executeQuery();
                 if( rs.next() ) {
-                    problemReport.setId(rs.getInt(1));
+
+                    generatedID = rs.getInt(1);
+                    problemReport.setId(generatedID);
                     problemReport.setReportCreationTime(LocalDateTime.now());
                 }
-                prid = "pr-" + sdf.format(today) + "-"+(problemReport.getId()+1);
+                prid = "pr-" + sdf.format(today) + "-"+(generatedID+1);
+                problemReport.setPrid(prid);
                 rs.close();
                 pst.close();
-            } else {
-                prid = problemReport.getPrid();
             }
+            System.out.println("OBJECT BEFORE SAVING: ");
+            System.out.println(problemReport);
             saveNewReport = connection.prepareStatement("UPDATE OR INSERT INTO PROBLEM_REPORTS (ID, PR_ID, " +
                     "T_CREATE, COMP_ID, DISP_ID, VEHICLE_ID, LICENSE_NO, ERROR_TYPE, PARAMS, STATE_ID, V_MODIFIED) " +
                     "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1 ) matching(id);");
             saveNewReport.setInt(1, problemReport.getId());                                           //ID
-            saveNewReport.setString(2, prid);                                                         //PR_ID
+            saveNewReport.setString(2, problemReport.getPrid());                                                         //PR_ID
             saveNewReport.setTimestamp(3, Timestamp.valueOf(problemReport.getReportCreationTime()));  //T_CREATE
             saveNewReport.setInt(4, problemReport.getCompId());                                       //COMP_ID
             saveNewReport.setInt(5, problemReport.getDispId());                                       //DISP_ID
@@ -240,8 +244,8 @@ public class ProblemReportServiceImpl implements ProblemReportService {
             }
             pst.close();
             saveNewReportChange = connection.prepareStatement("INSERT INTO PROBLEM_REPORT_CHANGES (ID, PR_ID, T, CONTACT_NAME, " +
-                    "BUG_MESSAGE) " +
-                    "VALUES (?, ?, ?, ?, ?);");
+                    "BUG_MESSAGE, V_MODIFIED) " +
+                    "VALUES (?, ?, ?, ?, ?, 1);");
             saveNewReportChange.setInt(1, problemReportChangeId);                                         //ID
             saveNewReportChange.setInt(2, problemReport.getId());                                         //PR_ID
             saveNewReportChange.setTimestamp(3, Timestamp.valueOf(problemReport.getReportCreationTime()));//T
