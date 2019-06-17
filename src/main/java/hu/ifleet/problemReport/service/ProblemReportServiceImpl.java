@@ -198,8 +198,8 @@ public class ProblemReportServiceImpl implements ProblemReportService {
         // T_SERVICE_CONFIRMATION_SENT: TIMESTAMP
         Date today = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        String params = "contact_name=\"" +  problemReport.getReporterName() + " contact_data=" + problemReport.getReporterEmail() +
-                ", phone_no=" + problemReport.getReporterPhoneNumber() + " problem_desc=" +
+        String params = "contact_name=" +  problemReport.getReporterName() + " contact_data= \"" + problemReport.getReporterEmail() +
+                "\", phone_no= \"" + problemReport.getReporterPhoneNumber() + "\" problem_desc= \"" +
                 problemReport.getProblemDescription()+"\"";
         String prid;
         int newChangeStateId;
@@ -223,7 +223,7 @@ public class ProblemReportServiceImpl implements ProblemReportService {
             } else {
                 newChangeStateId = 6;
             }
-            System.out.println("OBJECT BEFORE SAVING: ");
+            System.out.println("ERROROBJECT BEFORE SAVING: ");
             System.out.println(problemReport);
             saveNewReport = connection.prepareStatement("UPDATE OR INSERT INTO PROBLEM_REPORTS (ID, PR_ID, " +
                     "T_CREATE, COMP_ID, DISP_ID, VEHICLE_ID, LICENSE_NO, ERROR_TYPE, PARAMS, STATE_ID, V_MODIFIED) " +
@@ -247,14 +247,30 @@ public class ProblemReportServiceImpl implements ProblemReportService {
                 problemReportChangeId = generatedPRC.getInt(1);
             }
             pst.close();
+            System.out.println("REPORT CHANGE OBJECT BEFORE SAVING:");
+            System.out.println("ID:");
+            System.out.println(problemReportChangeId);
+            System.out.println("PR_ID:");
+            System.out.println(problemReport.getId());
+            System.out.println("T:");
+            System.out.println(Timestamp.valueOf(problemReport.getReportCreationTime()));
+            System.out.println("STATE_ID:");
+            System.out.println(newChangeStateId);
+            System.out.println("CONTACT_NAME:");
+            System.out.println(problemReport.getReporterName());
+            System.out.println("BUG_MESSAGE:");
+            System.out.println(problemReport.getProblemDescription());
+            System.out.println("V_MODIFIED:");
+            System.out.println(1);
             saveNewReportChange = connection.prepareStatement("INSERT INTO PROBLEM_REPORT_CHANGES (ID, PR_ID, T, STATE_ID, CONTACT_NAME, " +
                     "BUG_MESSAGE, V_MODIFIED) " +
-                    "VALUES (?, ?, ?, newChangeStateId, ?, ?, 1);");
+                    "VALUES (?, ?, ?, ?, ?, ?, 1);");
             saveNewReportChange.setInt(1, problemReportChangeId);                                         //ID
             saveNewReportChange.setInt(2, problemReport.getId());                                         //PR_ID
             saveNewReportChange.setTimestamp(3, Timestamp.valueOf(problemReport.getReportCreationTime()));//T
-            saveNewReportChange.setString(4, problemReport.getReporterName());
-            saveNewReportChange.setString(5,problemReport.getProblemDescription());
+            saveNewReportChange.setInt(4, newChangeStateId);
+            saveNewReportChange.setString(5, problemReport.getReporterName());
+            saveNewReportChange.setString(6,problemReport.getProblemDescription());
             saveNewReportChange.execute();
             PreparedStatement pstGen = connection.prepareStatement("select first 1 gen_id(gen_v_id,1) from rdb$database;");
             pstGen.execute();

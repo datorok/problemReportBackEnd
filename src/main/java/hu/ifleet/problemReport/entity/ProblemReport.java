@@ -79,8 +79,11 @@ public class ProblemReport {
                 String[] nameArr = paramValues[i].split("=");
                 if (nameArr[1].length() > 3) {
                     reporterName = nameArr[1];
+                    if (reporterName.contains("contact_data")){
+                        reporterName = reporterName.substring(0, reporterName.length()-12);
+                    }
                 } else {
-                    reporterName = "no data";
+                    reporterName = "";
                 }
 
             } else if (paramValues[i].length() > 8 && paramValues[i].substring(0, 9).equals("contact_d")) {
@@ -88,13 +91,13 @@ public class ProblemReport {
                 if (contactArr.length == 2) {
                     if (contactArr[1].contains("@")) {
                         reporterEmail = contactArr[1];
-                        reporterPhoneNumber = "no data";
+                        reporterPhoneNumber = "";
                     } else if (contactArr[1].trim().length() > 6) {
                         reporterPhoneNumber = contactArr[1];
-                        reporterEmail = "no data";
+                        reporterEmail = "";
                     } else {
-                        reporterPhoneNumber = "no data";
-                        reporterEmail = "no data";
+                        reporterPhoneNumber = "";
+                        reporterEmail = "";
                     }
                 } else if (contactArr.length == 3) {
                     if (contactArr[1].substring(0, 6).equals("email:")) {
@@ -116,13 +119,13 @@ public class ProblemReport {
                                     reporterEmail += " és " + emailArr[1].trim();
                                 }
                             } else {
-                                reporterEmail = "no data";
+                                reporterEmail = "";
                             }
                             if (emailArr[emailArr.length - 1].trim().equals("phone_no")) {
                                 if (contactArr[j + 2].length() > 6) {
                                     reporterPhoneNumber = contactArr[j + 2];
                                 } else {
-                                    reporterPhoneNumber = "no data";
+                                    reporterPhoneNumber = "";
                                 }
                             }
                         } else if (contactArr[j].equals("phone_no ")) {
