@@ -30,10 +30,7 @@ public class JsonController {
 
     @GetMapping("/hibalistajson")
     public ResponseEntity<List<ProblemReport>> getProblemReportList(@RequestParam(value = "sessionId",required = true) String sessionId) throws InterruptedException, ExecutionException, URISyntaxException, IOException, FxSessionException {
-        System.out.println("sessionId: " + sessionId);
         FxSessionResult sessionfx = FxSession.getInstance("problem_report_fx").checkSessionBlocking(sessionId);
-        System.out.println("COMPID: "+ sessionfx.getComp_id());
-        System.out.println("sessionfx of hibalista: "+sessionfx);
         return new ResponseEntity<>(problemReportServiceImpl.getProblemReportsList(sessionfx.getComp_id()), HttpStatus.OK);
     }
 
@@ -42,10 +39,8 @@ public class JsonController {
             throws InterruptedException, ExecutionException, URISyntaxException, IOException, FxSessionException {
 
         FxSessionResult sessionfx =  FxSession.getInstance("problem_report_fx").checkSessionBlocking(sessionId);
-
-        System.out.println("sessionfx of valtozasok: "+sessionfx);
         List<ProblemReportChange> result = problemReportServiceImpl.getProblemReportChangeList(problemReportId);
-        System.out.println(result.toString());
+
         return new ResponseEntity(result,HttpStatus.OK);
     }
 
@@ -55,8 +50,6 @@ public class JsonController {
 
         FxSessionResult sessionfx = FxSession.getInstance("problem_report_fx").datavehicleSessionBlocking(sessionId,"fleet_state"); //fleet_state helyett a hibabejelentő mostani funkciókódját (action) kell majd beírni
 
-        System.out.println("sessionfx of jarmuvek: "+sessionfx);
-//        return new ResponseEntity(sessionfx.getVehicles().stream().map(vehicle-> new Vehicle(vehicle.getId(), vehicle.getLicense_no())).collect(Collectors.toList()), HttpStatus.OK);
         List<Vehicle> vehicle_list = sessionfx.getVehicles().stream()
                 .map(vehicle -> new Vehicle(vehicle.getId(), vehicle.getLicense_no()))
                 .collect(Collectors.toList());
@@ -66,9 +59,7 @@ public class JsonController {
     @PostMapping("/problemreportpersist")
     public void saveNewProblemReport(@RequestBody ProblemReport problemreport, @RequestParam String sessionId)
             throws InterruptedException, ExecutionException, URISyntaxException, IOException, FxSessionException{
-        System.out.println(sessionId);
-        System.out.println("PROBLEMREPORT: ");
-        System.out.println(problemreport);
+
         FxSessionResult sessionfx =  FxSession.getInstance("problem_report_fx").checkSessionBlocking(sessionId);
         problemreport.setCompId(sessionfx.getComp_id());
         problemreport.setDispId(sessionfx.getDisp_id());
@@ -76,8 +67,4 @@ public class JsonController {
 
     }
 
-//    @GetMapping("/hibalistajson")
-//    public List<ProblemReport> getproblemReportList() {
-//        return problemReportServiceImpl.getProblemReportsList(1071);
-//   }
 }

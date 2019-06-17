@@ -53,13 +53,13 @@
                 <!--Az aria-expanded="false" közvetíti az adott elem aktuális állapotát (nyiva vs. zárva) a vezérlőnek. A "false", vagy "true érték azt adja meg,
                 hogy az adott elem default nyitva vagy zárva jelenjen-e meg"-->
                 <button class="btn btn-primary" type="button" data-toggle="collapse"
-                        th:data-target="'#collapseDetailes' + ${problemReport.reportId}"
+                        th:data-target="'#collapseDetailes' + ${problemReport.id}"
                         aria-expanded="false" aria-controls="collapseDetailes">
                     Részletek
                 </button>
             </td>
             <td th:text="${problemReport.reportCreationTime}"></td>
-            <td th:text="${problemReport.getActualStatus()}"></td>
+            <td th:text="${problemReport.getActualStatusName()}"></td>
             <td th:text="${problemReport.licencePlateNumber}"></td>
             <td th:text="${problemReport.reporterName}"></td>
             <td th:text="${problemReport.reporterEmail}"></td>
@@ -68,7 +68,7 @@
         </tr>
         <tr>
             <td colspan="6" class="hiddenRow">
-                <div class="collapse" th:id="'collapseDetailes' + ${problemReport.reportId}">
+                <div class="collapse" th:id="'collapseDetailes' + ${problemReport.id}">
                    <table>
                        <thead>
                        <tr>

@@ -36,9 +36,10 @@ public class ProblemReportServiceImpl implements ProblemReportService {
             connection = DriverManager.getConnection("jdbc:firebirdsql://localhost:3050/D:/databases/IGOR.GDB?defaultHoldable=true", property);
         } catch (SQLException e) {
             e.printStackTrace();
-            logger.error("DB-hez történő csatlakozás sikertelen", e);
-            logger.debug("DB-hez történő csatlakozás sikertelen. Csatlakozási adatok: "+property);
+            logger.error("DB-hez történő csatlakozás (getConnection()) sikertelen", e);
+            logger.info("DB-hez történő csatlakozás (getConnection()) sikertelen. Csatlakozási adatok: "+property);
         }
+        logger.info("DB-kapcsolat sikeres létrehozása (getConnection())");
         return connection;
     }
 
@@ -49,8 +50,11 @@ public class ProblemReportServiceImpl implements ProblemReportService {
                 connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
+                logger.error("DB-kapcsolat lezárása (closeConnection()) sikertelen", e);
+                logger.info("DB-kapcsolat lezárása (closeConnection()) sikertelen: "+e);
             }
         }
+        logger.info("DB-kapcsolat sikeres lezárása (closeConnection())");
     }
 
     public List<ProblemReportChange> getProblemReportChangeList(int problemReportId) {
@@ -80,9 +84,11 @@ public class ProblemReportServiceImpl implements ProblemReportService {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            logger.error("DB-ből történő adatlekérdezés (getProblemReportChangeList()) sikertelen", e);
+            logger.info("DB-ből történő adatlekérdezés (getProblemReportChangeList()) sikertelen: "+e);
         }
         closeConnection(connection);
-//        System.out.println("result.size: " + result.size());
+        logger.info("DB-ből történő sikeres adatlekérdezés (getProblemReportChangeList())");
         return result;
     }
 
@@ -94,10 +100,7 @@ public class ProblemReportServiceImpl implements ProblemReportService {
 
         PreparedStatement pstmt = null;
         try {
-//          pstmtGetProblemReports = connection.prepareStatement("SELECT * FROM PROBLEM_REPORTS WHERE STATE_ID <> 4 and COMP_ID = ?");
-//          pstmtGetProblemReports = connection.prepareStatement("SELECT * FROM PROBLEM_REPORTS WHERE COMP_ID = ?");
-//          pstmtGetProblemReportChanges = connection.prepareStatement("SELECT * FROM PROBLEM_REPORT_CHANGES WHERE PR_ID = ?");
-//          pstmtGetReportState = connection.prepareStatement("SELECT name FROM PROBLEM_REPORT_STATES WHERE ID = ?");
+
             pstmt = connection.prepareStatement("select pr.ID as prId, \n" +
                     "pr.PR_ID as prPrid, \n" +
                     "pr.T_CREATE as prCreationTime, \n" +
@@ -122,19 +125,6 @@ public class ProblemReportServiceImpl implements ProblemReportService {
                 int id = resultSet.getInt("PRID");
                 ProblemReport tmp = result.stream().filter(pr -> pr.getId() == id).findAny().orElse(null);
                 if (tmp == null) {
-//                    tmp = new ProblemReport(id, resultSet.getTimestamp("PRCREATIONTIME").toLocalDateTime(),
-//                            resultSet.getString("PARAMS"), resultSet.getInt("PRCOMPANYID"),
-//                            resultSet.getObject("PRLICENCEPLATE")==null ? "no data" : resultSet.getString("PRLICENCEPLATE"), resultSet.getInt("PRVEHICLEID"),
-//                            resultSet.getInt("PRERRORTYPE"), ErrorType.valueOfIntErrorType(resultSet.getInt("PRERRORTYPE")),
-//                            resultSet.getInt("PRACTUALSTATEID"), resultSet.getString("PRSTATENAME"),
-//                            resultSet.getString("PRSTATECOLOR"), resultSet.getString("PRCMESSAGE")
-//                    );
-//                    result.add(tmp);
-//                }
-//                tmp.getProblemReportChangeList().add(new ProblemReportChange(resultSet.getInt("PRCID"), resultSet.getInt("PRCPRID"),
-//                        resultSet.getTimestamp("PRCTIMESTAMP").toLocalDateTime(), resultSet.getString("PRCSTATENAME"),
-//                        resultSet.getInt("PRCSTATEID"), resultSet.getString("PRCDESCRIPTION")));
-//            }
 
                     tmp = new ProblemReport(id, resultSet.getString("PRPRID"), resultSet.getTimestamp("PRCREATIONTIME").toLocalDateTime(),
                              resultSet.getInt("PRCOMPANYID"), resultSet.getInt("PRERRORTYPE"),
@@ -150,18 +140,11 @@ public class ProblemReportServiceImpl implements ProblemReportService {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            logger.error("DB-ből történő adatlekérdezés (getProblemReportsList()) sikertelen", e);
+            logger.info("DB-ből történő adatlekérdezés (getProblemReportsList()) sikertelen: "+e);
         }
         closeConnection(connection);
-//        result.stream()
-//                .filter(problemReport ->problemReport.getLicencePlateNumber() == null || problemReport.getLicencePlateNumber().equals(""))
-//                .forEach(problemReport -> {
-//                    problemReport.setLicencePlateNumber("no data");
-//                });
-//        for(int i = 0; i<resultFromDB.size(); i++){
-//            if (resultFromDB.get(i).getLicencePlateNumber() == null || resultFromDB.get(i).getLicencePlateNumber().equals("")){
-//                resultFromDB.get(i).setLicencePlateNumber("no data");
-//            }
-//        }
+        logger.info("DB-ből történő sikeres adatlekérdezés (getProblemReportsList())");
         return result;
     }
 
@@ -172,30 +155,7 @@ public class ProblemReportServiceImpl implements ProblemReportService {
         Connection connection = getConnection();
         PreparedStatement saveNewReport = null;
         PreparedStatement saveNewReportChange = null;
-        //*** PROBLEM_REPORTS TABLE ***                                         *** PROBLEM_REPORT_CHANGES ***
-        // ID: INTEGER   NOT NULL!!!!!                                              ID: INTEGER         NOT NULL!!!!!
-        // PR_ID: VARCHAR(32)  NOT NULL!!!!!                                        PR_ID: VARCHAR(32)  NOT NULL!!!!!
-        // T_CREATE: TIMESTAMP NOT NULL!!!!!                                        T: TIMESTAMP
-        // COMP_ID: INTEGER  NOT NULL!!!!!                                          STATE_ID: INTEGER
-        // DISP_ID: INTEGER  NOT NULL!!!!!                                          CONTACT_NAME: VARCHAR(255)       +++
-        // VEHICLE_ID: INTEGER  +++                                                 STATE_CHANGER_NAME: VARCHAR(255) +++
-        // LICENSE_NO: VARCHAR(64)  +++                                             BUG_MESSAGE: VARCHAR(4000)
-        // BOX_ID: INTEGER                                                          INSIDE_MESSAGE: VARCHAR(255)
-        // UNIT_ID: INTEGER                                                         V_SYNC: INTEGER      NOT NULL!!!!!
-        // NODE_ID: INTEGER +++                                                     V_MODIFIED: INTEGER  NOT NULL!!!!!
-        // ERROR_TYPE: SMALLINT  +++
-        // T_INVESTIGATION: TIMESTAMP
-        // PERSON_ID: INTEGER
-        // CLOSED: SMALLINT
-        // PARAMS: VARCHAR(8192) +++
-        // T_CONFIRMATION_SENT: TIMESTAMP
-        // STATE_ID: INTEGER  NOT NULL!!!!!
-        // AGREE_STATUS: INTEGER  NOT NULL!!!!!
-        // LAST_SENT_AGREE_STATUS: INTEGER
-        // WS_ID: INTEGER
-        // V_SYNC: INTEGER   NOT NULL!!!!!
-        // V_MODIFIED: INTEGER  NOT NULL!!!!!
-        // T_SERVICE_CONFIRMATION_SENT: TIMESTAMP
+
         Date today = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         String params = "contact_name=" +  problemReport.getReporterName() + " contact_data= \"" + problemReport.getReporterEmail() +
@@ -223,13 +183,11 @@ public class ProblemReportServiceImpl implements ProblemReportService {
             } else {
                 newChangeStateId = 6;
             }
-            System.out.println("ERROROBJECT BEFORE SAVING: ");
-            System.out.println(problemReport);
             saveNewReport = connection.prepareStatement("UPDATE OR INSERT INTO PROBLEM_REPORTS (ID, PR_ID, " +
                     "T_CREATE, COMP_ID, DISP_ID, VEHICLE_ID, LICENSE_NO, ERROR_TYPE, PARAMS, STATE_ID, V_MODIFIED) " +
                     "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1 ) matching(id);");
             saveNewReport.setInt(1, problemReport.getId());                                           //ID
-            saveNewReport.setString(2, problemReport.getPrid());                                                         //PR_ID
+            saveNewReport.setString(2, problemReport.getPrid());                                      //PR_ID
             saveNewReport.setTimestamp(3, Timestamp.valueOf(problemReport.getReportCreationTime()));  //T_CREATE
             saveNewReport.setInt(4, problemReport.getCompId());                                       //COMP_ID
             saveNewReport.setInt(5, problemReport.getDispId());                                       //DISP_ID
@@ -239,6 +197,11 @@ public class ProblemReportServiceImpl implements ProblemReportService {
             saveNewReport.setString(9, params);                                                       //PARAMS
             saveNewReport.setInt(10, problemReport.getActualStatusId());                              //STATE_ID
             saveNewReport.execute();
+            logger.info("DB-ben történő adatmentési (saveNewProblemReport()) kísérlet a következő problemReport objektummal: ");
+            logger.info("id:" +problemReport.getId() +"; prid: "+ problemReport.getPrid() +"; reportCreationTime: " + Timestamp.valueOf(problemReport.getReportCreationTime()));
+            logger.info("compId: " + problemReport.getCompId() + "; dispId: " + problemReport.getDispId() + "; vehicleId: " + problemReport.getVehicleId());
+            logger.info("licencePlateNumber: " + problemReport.getLicencePlateNumber() + "; errorTypeId: " + problemReport.getVehicleId());
+            logger.info("params: "+ params + "; actualStatusId: " + problemReport.getActualStatusId());
             int problemReportChangeId = 0;
             PreparedStatement pst = connection.prepareStatement("select first 1 gen_id(gen_problem_report_changes,1) " +
                     "from rdb$database;");
@@ -247,21 +210,6 @@ public class ProblemReportServiceImpl implements ProblemReportService {
                 problemReportChangeId = generatedPRC.getInt(1);
             }
             pst.close();
-            System.out.println("REPORT CHANGE OBJECT BEFORE SAVING:");
-            System.out.println("ID:");
-            System.out.println(problemReportChangeId);
-            System.out.println("PR_ID:");
-            System.out.println(problemReport.getId());
-            System.out.println("T:");
-            System.out.println(Timestamp.valueOf(problemReport.getReportCreationTime()));
-            System.out.println("STATE_ID:");
-            System.out.println(newChangeStateId);
-            System.out.println("CONTACT_NAME:");
-            System.out.println(problemReport.getReporterName());
-            System.out.println("BUG_MESSAGE:");
-            System.out.println(problemReport.getProblemDescription());
-            System.out.println("V_MODIFIED:");
-            System.out.println(1);
             saveNewReportChange = connection.prepareStatement("INSERT INTO PROBLEM_REPORT_CHANGES (ID, PR_ID, T, STATE_ID, CONTACT_NAME, " +
                     "BUG_MESSAGE, V_MODIFIED) " +
                     "VALUES (?, ?, ?, ?, ?, ?, 1);");
@@ -272,11 +220,16 @@ public class ProblemReportServiceImpl implements ProblemReportService {
             saveNewReportChange.setString(5, problemReport.getReporterName());
             saveNewReportChange.setString(6,problemReport.getProblemDescription());
             saveNewReportChange.execute();
+            logger.info("DB-ben történő adatmentési (saveNewProblemReport()) kísérlet a következő problemReportChange objektummal: ");
+            logger.info("problemReportChangeId: " + problemReportChangeId + "; problemReportId: " + problemReport.getId());
+            logger.info("stateChangeTime: " + Timestamp.valueOf(problemReport.getReportCreationTime()) + "; stateChangeActualStateInt: " + newChangeStateId);
+            logger.info("contactName: " + problemReport.getReporterName() + "; stateChangeMessage;: " + problemReport.getProblemDescription());
             PreparedStatement pstGen = connection.prepareStatement("select first 1 gen_id(gen_v_id,1) from rdb$database;");
             pstGen.execute();
             pstGen.close();
         } catch (SQLException e) {
             e.printStackTrace();
+            logger.info("DB-ben történő adatmentés (saveNewProblemReport()) sikertelen: " + e);
             return false;
         } finally {
             try {
@@ -285,8 +238,10 @@ public class ProblemReportServiceImpl implements ProblemReportService {
                 saveNewReportChange.close();
             } catch (SQLException ex) {
                 System.err.println(ex);
+                logger.info("DB-ben történő adatmentés (saveNewProblemReport()) sikertelen: " + ex);
             }
         }
+        logger.info("DB-ben történő sikeres adatmentés (saveNewProblemReport())");
         return true;
     }
 }
