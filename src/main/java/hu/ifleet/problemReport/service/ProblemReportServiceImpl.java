@@ -158,13 +158,14 @@ public class ProblemReportServiceImpl implements ProblemReportService {
 
         Date today = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        String params = "contact_name=" +  problemReport.getReporterName() + " contact_data= \"" + problemReport.getReporterEmail() +
-                "\", phone_no= \"" + problemReport.getReporterPhoneNumber() + "\" problem_desc= \"" +
-                problemReport.getProblemDescription()+"\"";
+        String params = problemReport.getParams();
         String prid;
         int newChangeStateId;
         try {
             if( problemReport.getId() < 1){
+                params = "contact_name=" +  problemReport.getReporterName() + " contact_data= \"" + problemReport.getReporterEmail() +
+                        "\", phone_no= \"" + problemReport.getReporterPhoneNumber() + "\" problem_desc= \"" +
+                        problemReport.getProblemDescription()+"\"";
                 int generatedID =0;
                 PreparedStatement pst = connection.prepareStatement("select first 1 gen_id(gen_problem_reports,1) " +
                         "from rdb$database;");
@@ -194,7 +195,7 @@ public class ProblemReportServiceImpl implements ProblemReportService {
             saveNewReport.setInt(6, problemReport.getVehicleId());                                    //VEHICLE_ID
             saveNewReport.setString(7, problemReport.getLicencePlateNumber());                        //LICENSE_NO
             saveNewReport.setInt(8, problemReport.getErrorTypeId());                                  //ERROR_TYPE
-            saveNewReport.setString(9, params);                                                       //PARAMS
+            saveNewReport.setString(9, params == "" ? problemReport.getParams() : params);            //PARAMS
             saveNewReport.setInt(10, problemReport.getActualStatusId());                              //STATE_ID
             saveNewReport.execute();
             logger.info("DB-ben történő adatmentési (saveNewProblemReport()) kísérlet a következő problemReport objektummal: ");
